@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Threading;
 
 namespace Trainer
 {
@@ -21,7 +22,9 @@ namespace Trainer
     public partial class MainWindow : Window
     {
         private string nachstr = "awds dwadgtrhu thhfh sed\n";
-        string tempstyle;
+        //var tempstyle;
+
+        private int oshibki;
        
         public MainWindow()
         {
@@ -60,14 +63,55 @@ namespace Trainer
             return true;
         }
 
+        private void checkText()
+        {
+            string tempforfirst;
+            string tempforsecond;
+
+            List<char> first = new List<char>();
+            List<char> second = new List<char>();
+            char[] b = stri.Text.ToCharArray();
+            char[] a = game.Text.ToCharArray();
+            //tempforfirst = game.Text;
+            //tempforsecond = stri.Text;
+            try
+            {
+                for(int i=0;i<stri.Text.Length;i++)
+                {
+                    first.Add(b[i]);
+                    second.Add(a[i]);
+                    if(b[i]!=a[i])
+                    {
+                        oshibki += 1;
+                        Mark.Content = $"Marks: {oshibki}";
+                        game.Foreground = Brushes.Red;
+                    }
+                    else
+                    {
+                        game.Foreground = Brushes.Black;
+
+                    }
+                }
+            }
+            catch
+            {
+
+            }
+
+        }
+
         private void MainWindow_KeyDown(object sender, KeyEventArgs e)
         {
+            
             if (e.Key == Key.Back)
             {
                 int x1 = game.Text.Length - 1;
                 game.Text = game.Text.Remove(x1);
             }
-            
+            else if(e.Key==Key.Space)
+            {
+                game.Text += " ";
+            }
             else if (e.Key==Key.Enter)
             {
                 if (start.IsEnabled == true)
@@ -76,18 +120,25 @@ namespace Trainer
             }
             else
             {
-                foreach(Button button in maGrid.Children)
+
+                foreach (Button button in maGrid.Children)
                 {
+                    var tempstyle = button.Style;
                     try
                     {
                         if (button.Name == e.Key.ToString()&&checkback(e))
                         {
-                            tempstyle = button.Style.ToString();
                             //MessageBox.Show("das");
                             button.Style = this.FindResource("pressKey") as Style;
                             game.Text += button.Content;
+                           
+                            button.Style = tempstyle;
+                            checkText();
+                          
                             return;
                         }
+                        //MessageBox.Show(Convert.ToString(tempstyle));
+
                     }
                     catch
                     {
@@ -149,6 +200,7 @@ namespace Trainer
             game.Text = "";
             start.IsEnabled = true;
             stop.IsEnabled = false;
+            Mark.Content = "Marks: ";
         }
 
         private void Button_Click_3(object sender, RoutedEventArgs e) //stop
