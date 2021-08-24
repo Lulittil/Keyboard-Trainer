@@ -22,10 +22,13 @@ namespace Trainer
     public partial class MainWindow : Window
     {
         private string nachstr = "awds dwadgtrhu thhfh sed\n";
+        string tempstyle;
         //var tempstyle;
+        Style tempstylee;
+        int kolvoprav;
 
         private int oshibki;
-       
+
         public MainWindow()
         {
             InitializeComponent();
@@ -56,7 +59,7 @@ namespace Trainer
 
         private bool checkback(KeyEventArgs e)
         {
-            if(e.Key==Key.Back||e.Key==Key.System)
+            if (e.Key == Key.Back || e.Key == Key.System)
             {
                 return false;
             }
@@ -65,9 +68,6 @@ namespace Trainer
 
         private void checkText()
         {
-            string tempforfirst;
-            string tempforsecond;
-
             List<char> first = new List<char>();
             List<char> second = new List<char>();
             char[] b = stri.Text.ToCharArray();
@@ -76,11 +76,11 @@ namespace Trainer
             //tempforsecond = stri.Text;
             try
             {
-                for(int i=0;i<stri.Text.Length;i++)
+                for (int i = 0; i < stri.Text.Length; i++)
                 {
                     first.Add(b[i]);
                     second.Add(a[i]);
-                    if(b[i]!=a[i])
+                    if (b[i] != a[i])
                     {
                         oshibki += 1;
                         Mark.Content = $"Marks: {oshibki}";
@@ -88,6 +88,8 @@ namespace Trainer
                     }
                     else
                     {
+                        kolvoprav=i+1;
+                        Kolvoprav.Content = $"Checks: {kolvoprav}";
                         game.Foreground = Brushes.Black;
 
                     }
@@ -102,17 +104,22 @@ namespace Trainer
 
         private void MainWindow_KeyDown(object sender, KeyEventArgs e)
         {
-            
-            if (e.Key == Key.Back)
-            {
-                int x1 = game.Text.Length - 1;
-                game.Text = game.Text.Remove(x1);
-            }
-            else if(e.Key==Key.Space)
+            if (e.Key == Key.Space)
             {
                 game.Text += " ";
             }
-            else if (e.Key==Key.Enter)
+
+            else if (e.Key == Key.Back )
+            {
+                
+                    int x1 = game.Text.Length - 1;
+                    game.Text = game.Text.Remove(x1);
+                    Thread.Sleep(20);
+                
+                
+                
+            }
+            else if (e.Key == Key.Enter)
             {
                 if (start.IsEnabled == true)
                     startt();
@@ -120,21 +127,18 @@ namespace Trainer
             }
             else
             {
-
                 foreach (Button button in maGrid.Children)
                 {
-                    var tempstyle = button.Style;
+                    tempstylee = button.Style;
                     try
                     {
-                        if (button.Name == e.Key.ToString()&&checkback(e))
+                        if (button.Name == e.Key.ToString() && checkback(e))
                         {
                             //MessageBox.Show("das");
                             button.Style = this.FindResource("pressKey") as Style;
                             game.Text += button.Content;
-                           
-                            button.Style = tempstyle;
                             checkText();
-                          
+
                             return;
                         }
                         //MessageBox.Show(Convert.ToString(tempstyle));
@@ -147,7 +151,7 @@ namespace Trainer
                     //button.Style= this.FindResource(tempstyle) as Style;
                 }
             }
-            
+
             ////MessageBox.Show(e.Key.ToString());
             //if (start.IsEnabled == false&&checkkey(e))
             //{
@@ -172,10 +176,10 @@ namespace Trainer
             //    }
             //    else if (e.Key == Key.LeftShift)
             //    {
-                    
+
             //    }
             //}
-            
+
 
         }
 
@@ -201,6 +205,7 @@ namespace Trainer
             start.IsEnabled = true;
             stop.IsEnabled = false;
             Mark.Content = "Marks: ";
+            oshibki = 0;
         }
 
         private void Button_Click_3(object sender, RoutedEventArgs e) //stop
@@ -213,12 +218,33 @@ namespace Trainer
             MessageBox.Show(e.Key.ToString());
         }
 
+        private void Window_KeyUp(object sender, KeyEventArgs e)
+        {
+            foreach (Button button in maGrid.Children)
+            {
+                try
+                {
+                    if (button.Name == e.Key.ToString() && checkback(e))
+                    {
+                        button.Style = tempstylee;
+                        return;
+                    }
+                    //MessageBox.Show(Convert.ToString(tempstyle));
 
-        //private void Button_KeyUp(object sender, KeyEventArgs e)
-        //{
-        //    //if(e.Key==Key.)  textBox1.Text += string.Format("{0}", (sender as Button).Content);
+                }
+                catch
+                {
+                    continue;
+                }
+            }
 
-        //    MessageBox.Show(e.Key.ToString());
-        //}
+
+            //private void Button_KeyUp(object sender, KeyEventArgs e)
+            //{
+            //    //if(e.Key==Key.)  textBox1.Text += string.Format("{0}", (sender as Button).Content);
+
+            //    MessageBox.Show(e.Key.ToString());
+            //}
+        }
     }
 }
